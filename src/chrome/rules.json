@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "regexFilter": "^(http://ff\\.kes\\.v2\\.scr\\.kaspersky-labs\\.com(:80)?/|https://ff\\.kes\\.v2\\.scr\\.kaspersky-labs\\.com(:443)?/)",
+      "isUrlFilterCaseSensitive": false,
+      "requestMethods": [
+        "get"
+      ],
+      "resourceTypes": [
+        "xmlhttprequest"
+      ]
+    }
+  }
+]

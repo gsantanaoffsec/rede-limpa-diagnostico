@@ -1,0 +1,12 @@
+{
+  "name": "rede-limpa-diagnostico",
+  "version": "1.2.1",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

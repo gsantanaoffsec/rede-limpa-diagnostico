@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Rede limpa + Diagnóstico",
+  "version": "1.2.1",
+  "minimum_chrome_version": "120",
+  "description": "Diagnóstico por aba, filtros e respostas com cópia, painel Rede limpa e bloqueio do polling Kaspersky.",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "clipboardWrite",
+    "debugger",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Rede limpa + Diagnóstico",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "devtools_page": "devtools.html",
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "kaspersky_polling",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  }
+}
