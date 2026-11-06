@@ -1,10 +1,13 @@
 (() => {
 const sensitive = /password|passwd|senha|authorization|cookie|secret|token|api[_-]?key|credential|session|csrf|xsrf/i;
 function safeText(value) {
-  return String(value)
+  const text = String(value)
     .replace(/\bBearer\s+[^\s"<>]+/gi, 'Bearer [REMOVIDO]')
-    .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, '[JWT REMOVIDO]')
-    .replace(/((?:password|passwd|senha|authorization|cookie|secret|[\w-]*token|api[_-]?key|session)[\w-]*["']?\s*[:=]\s*["']?)[^\s,"'&<>}]+/gi, '$1[REMOVIDO]');
+    .replace(/(?<![A-Za-z0-9_-])eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, '[JWT REMOVIDO]');
+  if (!sensitive.test(text)) return text;
+  return text
+    .replace(/(?<![\w-])((?:password|passwd|senha|authorization|cookie|secret|[\w-]*token|api[_-]?key|session|credential|csrf|xsrf)[\w-]*["']?\s*[:=]\s*)(["'])(?:\\.|(?!\2)[^\\])*(?:\2|$)/gi, '$1$2[REMOVIDO]$2')
+    .replace(/(?<![\w-])((?:password|passwd|senha|authorization|cookie|secret|[\w-]*token|api[_-]?key|session|credential|csrf|xsrf)[\w-]*\s*[:=]\s*)(?!["'])[^&\r\n,;}<>]+/gi, '$1[REMOVIDO]');
 }
 function clean(value, depth = 0) {
   if (depth > 30) return '[LIMITE DE PROFUNDIDADE]';

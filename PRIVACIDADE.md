@@ -1,0 +1,15 @@
+# Privacidade — Rede limpa + Diagnóstico 2.0.0
+
+A extensão é uma ferramenta local de diagnóstico de requisições para desenvolvedores. Não exige cadastro, não contém anúncios, telemetria, análise remota, SDK de IA ou transmissão de capturas para o desenvolvedor ou terceiros.
+
+Quando a pessoa inicia a captura, são processados URL e filtros, método, horário, status, duração, corpo enviado e resposta JSON/texto das chamadas fetch/XHR da aba escolhida. Esses dados podem conter informações pessoais ou de aplicações privadas. Cabeçalhos originais de autenticação/cookies não são coletados pelo painel. Credenciais comuns são removidas por regras locais; a remoção não é uma garantia de anonimização completa.
+
+Captura e snapshots A/B ficam no armazenamento local do perfil do navegador por até 24 horas, com limpeza quando a extensão é utilizada, limitados conjuntamente a 6 MB. Preferências de tema, janela e hosts permanecem até serem alteradas ou a extensão ser removida. O estado de captura da aba usa memória da sessão do navegador e não reinicia automaticamente após fechar o navegador. O armazenamento local não é criptografia adicional contra pessoas ou programas com acesso ao perfil.
+
+A pessoa pode consultar, limpar e exportar os próprios registros. Copiar ou baixar exige revisão da prévia e ação explícita. O conteúdo exportado pode conter dados não reconhecidos pelas regras. Nomes de campos adicionais e a prévia editável permitem remoção manual. Arquivos baixados e dados já copiados ficam fora do controle da extensão.
+
+Regras de bloqueio consultam o host das chamadas fetch/XHR em todas as abas, inclusive sem captura ativa. A regra padrão identifica somente o host exato de polling do Kaspersky. Não é um antivírus e não desativa a proteção geral do produto. Ocultação de host e bloqueio são operações distintas.
+
+Permissões: `tabs`/`activeTab` para seleção da aba; `storage` para estado local e preferências; `clipboardWrite` para copiar; `debugger` no Chrome para observar a rede da aba escolhida; `declarativeNetRequest` no Chrome e `webRequest`/`webRequestBlocking` no Firefox para as regras de bloqueio e captura. Acesso aos sites permite diagnosticar aplicações locais e outros hosts escolhidos pela pessoa. Não há código remoto.
+
+O endereço de suporte e a URL pública desta política devem ser os canais reais mantidos pelo publicador no repositório/loja. Este arquivo e a página interna `privacy.html` contêm a mesma política; publique uma URL pública antes da submissão às lojas. Não há submissão automática nesta versão.

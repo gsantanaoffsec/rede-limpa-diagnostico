@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "Rede limpa + Diagnóstico",
-  "version": "1.2.1",
-  "description": "Diagnóstico por aba, filtros e respostas com cópia, painel Rede limpa e bloqueio do polling Kaspersky.",
+  "version": "2.0.0",
+  "description": "Capture e compare pesquisas HTTP, analise filtros, revise dados e exporte diagnósticos locais. Ocultação e bloqueio de hosts.",
   "permissions": [
     "webRequest",
     "webRequestBlocking",
@@ -16,6 +16,8 @@
     "scripts": [
       "network-core.js",
       "diagnostic-core.js",
+      "insights.js",
+      "capture-session.js",
       "extension-ui.js",
       "background.js"
     ]

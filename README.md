@@ -1,73 +1,78 @@
-# Rede limpa + Diagnóstico — 1.2.1
+# Rede limpa + Diagnóstico 2.0
 
-Extensão para Chrome e Firefox em Windows e macOS. Captura filtros e respostas da aba escolhida, copia diagnósticos e integra o painel/bloqueio do [kspsk-block](https://github.com/gsantanaoffsec/kspsk-block).
+Extensão para entender filtros e respostas de pesquisas HTTP, comparar capturas e compartilhar um diagnóstico revisado. Processamento local, sem conta, telemetria, serviço de IA ou envio de capturas a servidores.
 
-## Correção desta versão
+## Instalar
 
-Corrigida a abertura intermitente em uma faixa estreita contendo apenas a barra de rolagem. O popup deixou de depender de `max-width: 100vw` durante o cálculo de tamanho: agora possui largura e largura mínima explícitas de 680 px no elemento raiz e no corpo. A janela flutuante mantém largura adaptável, com mínimo de 340 px.
+Se você baixou ou clonou este repositório, os pacotes prontos estão em `dist/chrome` e `dist/firefox`. No Chrome, selecione a pasta `dist/chrome` em **Carregar sem compactação**. No Firefox, selecione `dist/firefox/manifest.json` em **Carregar extensão temporária**. As instruções abaixo também servem para os ZIPs gerados por `python scripts/package.py`.
 
-## Instalar no Chrome
+### Chrome — Windows e macOS
 
-1. Extraia este ZIP para uma pasta fora dos projetos da aplicação.
-2. Abra `chrome://extensions` e ative o modo do desenvolvedor.
-3. Clique em **Carregar sem compactação** e selecione `dist/chrome`.
-4. Se houver uma versão antiga instalada, remova-a ou recarregue-a apontando para esta pasta.
+Extraia `rede-limpa-chrome-2.0.0.zip`. Abra `chrome://extensions`, ative **Modo do desenvolvedor**, escolha **Carregar sem compactação** e selecione a pasta que contém `manifest.json`. Chrome 120 ou superior. Ao atualizar, recarregue a extensão nessa tela. A captura sem DevTools usa `debugger` e o navegador apresenta o aviso correspondente.
 
-Chrome 120+. A captura sem F12 usa a API debugger e mostra o aviso padrão de depuração enquanto ativa. Feche o DevTools da aba antes de iniciar; **Parar captura** desanexa o debugger.
+### Firefox — Windows e macOS
 
-## Instalar no Firefox
+Extraia `rede-limpa-firefox-2.0.0.zip`. Abra `about:debugging#/runtime/this-firefox`, escolha **Carregar extensão temporária** e selecione `manifest.json`. Firefox 140 ou superior. A instalação temporária termina quando o navegador fecha. Para instalação permanente, a versão precisa ser assinada pela Mozilla; estes pacotes ainda não são assinados.
 
-1. Abra `about:debugging#/runtime/this-firefox`.
-2. Remova a versão temporária anterior.
-3. Clique em **Carregar extensão temporária** e selecione `dist/firefox/manifest.json`.
+Não é necessário instalar Node.js para usar os pacotes prontos. O código não depende de comandos Windows para funcionar no macOS, mas a instalação e a captura no macOS ainda precisam de teste real.
 
-Firefox 140+. A instalação temporária termina ao reiniciar o Firefox; instalação permanente exige assinatura Mozilla. O ZIP não é assinado.
+## Capturar e investigar
 
-## Usar
+1. Abra uma página HTTP/HTTPS, selecione a aba no painel e clique em **Iniciar captura**.
+2. Faça a pesquisa na aplicação. Volte ao popup ou use a janela flutuante, que pode ser movida e redimensionada.
+3. Filtre por URL, método, status ou nome da ação. **Somente erros** considera status HTTP a partir de 400 e falhas de rede.
+4. Selecione uma chamada. O diagnóstico apresenta evidências e hipóteses locais; **Filtros explicados** mostra exatamente o que foi enviado.
+5. Use **Agrupar chamadas repetidas** para agrupar por método + origem + caminho, independentemente dos valores da query. O grupo informa quantidade, erros, duração média e intervalo médio. Clique novamente no grupo para alternar entre seus registros; desmarque a opção para ver todas as linhas.
 
-1. Abra a extensão e escolha **Aba para capturar**.
-2. Clique em **Iniciar captura** e repita a ação na aplicação.
-3. Filtre por URL/método/status e selecione uma chamada.
-4. Use **Copiar selecionada** ou **Copiar lista filtrada**.
-5. Use **Parar captura** e **Limpar** ao terminar.
+O diagnóstico reconhece listas `data: []`, possíveis datas compactas, erros de data/SQL conhecidos, erros HTTP/rede, demora a partir de 2 segundos e limitações da captura. A análise não conhece o schema nem o contrato do seu backend e não confirma a causa do erro.
 
-A captura só inclui chamadas novas. Mantém até 100 fetch/XHR e até 128 KiB de texto por corpo. Tokens e senhas comuns são ocultados no diagnóstico; revise dados pessoais antes de compartilhar. Sem envio externo/telemetria. As capturas ficam em memória; no Chrome elas podem desaparecer se o service worker encerrar após a captura parar.
+## Marcar ações, linha do tempo e comparação A/B
 
-## Temas e janela
+- Em **Marcar uma ação**, informe a operação e escolha uma duração de 15 a 120 segundos. Marque e execute a operação na página. As chamadas dentro desse período recebem o marcador; chamadas em segundo plano também podem entrar. Sem marcador, intervalos de até 3 segundos formam grupos temporais.
+- Capture a pesquisa que funciona e use **Salvar captura em A**. Limpe a captura atual, reproduza o problema e salve em **B**. Limpar a captura atual preserva os snapshots.
+- **Comparar A × B** compara filtros (inclusive parâmetros repetidos), corpo enviado, status, resposta e avisos. A correspondência usa método, origem, caminho e ordem de ocorrência; até 500 diferenças e profundidade 12. Chamadas em outra ordem podem exigir interpretação manual. Tempos e IDs não entram na comparação.
+- A linha do tempo usa a lista filtrada e permite voltar ao registro selecionado.
 
-Escolha Claro, Escuro ou Sistema. Use **Abrir janela flutuante** para manter o painel aberto ao trabalhar na aplicação. A janela é movível e redimensionável, sem forçar sempre-no-topo. **Sempre abrir em janela flutuante** salva essa preferência. O seletor de abas permite escolher a aplicação mesmo com a janela separada em foco.
+## Popup, janela e DevTools
 
-## Bloqueio e painel original
+As três interfaces consultam a mesma sessão, incluindo A/B e regras de hosts. O tema claro, escuro ou do sistema e o modo de janela são persistidos.
 
-O bloqueio ligado por padrão atua em GETs XHR/fetch para `ff.kes.v2.scr.kaspersky-labs.com`, HTTP/HTTPS nas portas padrão. Todas as chamadas desse host ficam ocultas nas duas listas. Não bloqueia POST, portas alternativas ou hosts parecidos.
+No Chrome, a captura pelo botão da extensão usa `debugger`. Abrir o DevTools pode encerrar essa conexão. Nesse caso, abra o painel **Rede limpa** no DevTools e clique em **Iniciar captura**: ele passa a alimentar a mesma sessão pelo evento de rede do DevTools, sem disputar o depurador. Essa modalidade depende da identificação fetch/XHR (`_resourceType`) fornecida pelo Chrome e exige o DevTools aberto. Para voltar a capturar sem F12, feche o DevTools e inicie pelo popup. Após fechar o DevTools, a interface pode indicar o modo anterior até você parar ou reiniciar a captura.
 
-O painel adicional **Rede limpa** continua no DevTools, com captura própria, cores, filtros, pausa e preservar ao navegar. No Firefox, abra Rede nativa uma vez e volte ao painel para ativar sua captura. O popup não precisa desse procedimento. O painel original permite inspecionar headers reais.
+No Firefox, o mesmo capturador `webRequest` atende popup e DevTools. Em ambos os navegadores são capturadas chamadas fetch/XHR, não navegações, imagens, WebSocket ou todo o tráfego do computador. Iframes e workers em alvos separados podem não ser capturados.
 
-O contador de bloqueios é disponibilizado pelo Firefox; no Chrome é informado o estado da regra sem contador numérico. O bloqueio funciona mesmo com captura parada. Nenhuma configuração de Kaspersky, DNS, hosts, proxy ou firewall é alterada.
+## Ocultar ou bloquear hosts
 
-## Fontes e desenvolvimento
+Cadastre até 30 hosts ASCII exatos. Exemplos: `localhost`, `api.exemplo.com`. URLs, portas, caminhos, curingas, IPv6 e nomes Unicode não são aceitos; para domínio internacional use sua representação ASCII.
 
-Documentação exclusivamente Markdown. Fontes compartilhados em `src/shared`, backends específicos em `src/chrome` e `src/firefox`. O build não depende de comandos de sistema e é utilizável em Windows/macOS. A instalação não precisa de executável nativo.
+**Ocultar** evita mostrar o host na lista, sem impedir a requisição. **Bloquear** impede fetch/XHR desse host em todas as abas, mesmo com a captura parada. Para hosts adicionados, todos os métodos e portas HTTP/HTTPS são abrangidos. O padrão Kaspersky mantém o comportamento anterior: host `ff.kes.v2.scr.kaspersky-labs.com`, somente GET em portas padrão. Os controles de ocultação e bloqueio são independentes. As mudanças só entram em vigor em **Aplicar regras**; remover uma linha exige aplicar novamente. No Chrome o contador de bloqueios não está disponível sem permissões adicionais.
 
-Node.js 20+, sem instalar dependências:
+## Revisar e exportar
+
+Escolha chamada selecionada, lista filtrada ou snapshot A/B. Formatos: JSON, Markdown, HAR, cURL ou comparação A/B em Markdown. cURL usa sintaxe Bash/zsh (no Windows, Git Bash); não execute diretamente no PowerShell. Nenhuma chamada é repetida automaticamente.
+
+Credenciais comuns são removidas antes de apresentar ou persistir a captura. A revisão adicional remove e-mails, CPF e campos comuns de contato e aceita nomes de campos extras, como `nm_pessoa`, `nome` ou `documento`. A identificação é heurística e pode remover textos legítimos ou deixar dados pessoais não reconhecidos. **Preparar prévia** mostra o conteúdo editável e a contagem de ocorrências adicionais protegidas. Confirme que revisou para copiar ou baixar; editar a prévia invalida a confirmação.
+
+HAR/cURL são versões sanitizadas para diagnóstico: não incluem autenticação nem cabeçalhos originais, podem omitir corpos e não equivalem a uma reprodução completa. O HAR não conhece o tamanho original nem a decomposição real de tempos. Alterações manuais na prévia podem invalidar JSON/HAR; confira antes de importar.
+
+## Persistência e privacidade
+
+Até 300 chamadas e 128 KiB UTF-8 de cada corpo. Captura atual + snapshots A/B dividem até 6 MB; os registros mais antigos são descartados primeiro. Se snapshots precisarem ser reduzidos, a interface sinaliza. Dados expiram após 24 horas; a limpeza ocorre ao utilizar a extensão. Fechar o popup ou suspender o worker não apaga a captura. Chamadas interrompidas podem não recuperar o corpo. Após reiniciar o navegador, as chamadas antigas podem ser consultadas, mas a captura deve ser iniciada novamente.
+
+**Apagar capturas e comparações** remove os dados coletados e A/B, mantendo tema e hosts. Downloads e texto já copiado não são apagados. Não existe sincronização pela conta do navegador. Veja [PRIVACIDADE.md](PRIVACIDADE.md).
+
+## Desenvolver e validar
+
+Node.js 20+, Python 3 apenas para empacotar:
 
 ```bash
-node scripts/build.mjs
-node --test tests
+npm ci --ignore-scripts
+npm test
+npm run check
+npm run build
+python scripts/package.py
 ```
 
-Os ZIPs já incluem `dist/`. Ao clonar pelo GitHub, gere `dist/` com o comando acima. Após alterar fontes, gere novamente e recarregue a extensão no navegador.
+Não há dependências de execução na extensão. `jsdom` é usado somente nos testes. `src/shared/popup.html` é a fonte da interface; o build gera `panel.html` a partir dela. `dist/firefox` e `dist/chrome` são regeneráveis. `release` recebe os três ZIPs, com `manifest.json` na raiz dos pacotes de navegador.
 
-## Validação e limitações
-
-Veja [docs/VALIDACAO.md](docs/VALIDACAO.md). A correção de geometria foi comparada em Chrome headless com viewport inicial de 18 px: antes o corpo media 18 px; depois, 680 px. Também foi conferida a adaptação da janela flutuante a 360 e 960 px.
-
-Não foi feita instalação completa nesta reconstrução nem teste em macOS. A captura usa APIs do navegador, sem integração nativa do sistema operacional. Iframes/workers em alvos separados e WebSocket não têm captura garantida.
-
-## Permissões
-
-`tabs`/`activeTab` identificam a aba; `storage` salva preferências e referência da janela; `clipboardWrite` copia o diagnóstico. Firefox usa `webRequest`/`webRequestBlocking` e acesso aos sites; Chrome usa `debugger`, `declarativeNetRequest` e acesso aos sites. Só a preferência de bloqueio e tema/modo é persistida; não há exportação automática de dados.
-
-## Origem
-
-Componentes do kspsk-block do usuário, revisão `3ee5b873c5c386462cb9571ae91738bc462388a0`: `network-core.js`, painel DevTools e regra de bloqueio. Diagnóstico, temas e janela adicionados nesta sessão. Os componentes de proxy de terminal não integram este pacote.
+Veja [validação](docs/VALIDACAO.md), [publicação nas lojas](docs/PUBLICACAO.md), [histórico](CHANGELOG.md) e [origem dos componentes](NOTICE.md).

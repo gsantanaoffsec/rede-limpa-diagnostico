@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Rede limpa + Diagnóstico",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "minimum_chrome_version": "120",
-  "description": "Diagnóstico por aba, filtros e respostas com cópia, painel Rede limpa e bloqueio do polling Kaspersky.",
+  "description": "Capture e compare pesquisas HTTP, analise filtros, revise dados e exporte diagnósticos locais. Ocultação e bloqueio de hosts.",
   "permissions": [
     "activeTab",
     "tabs",
